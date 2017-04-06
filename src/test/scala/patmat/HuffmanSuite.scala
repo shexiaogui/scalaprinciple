@@ -1,10 +1,9 @@
 package patmat
 
+import org.junit.Ignore
 import org.scalatest.FunSuite
-
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-
 import patmat.Huffman._
 
 @RunWith(classOf[JUnitRunner])
@@ -56,12 +55,46 @@ class HuffmanSuite extends FunSuite {
     val secrete = decodedSecret
     println(secrete)
   }
-
-
+  
+  test("until"){
+    new TestTrees {
+      val list = List(Leaf('a', 2), Leaf('b', 3), Leaf('d', 4))
+      assert(until(singleton, combine)(list) === t2)
+    }
+  }
+  
   test("decode and encode a very short text should be identity") {
     new TestTrees {
       assert(decode(t1, encode(t1)("ab".toList)) === "ab".toList)
     }
   }
+  
+  
+
+  test("decode where tree is fork and list = 101"){
+    new TestTrees {
+      val tree = Fork(Fork(Leaf('a',2), Leaf('b',3), List('a','b'), 5), Leaf('d',4), List('a','b','d'), 9)
+      val list = List[Bit](1,0,1)
+      assert(decode(tree, list) === List('d', 'b'))
+    }
+  }
+  
+  test("decode where tree is fork and list = 011"){
+    new TestTrees {
+      val tree = Fork(Fork(Leaf('a',2), Leaf('b',3), List('a','b'), 5), Leaf('d',4), List('a','b','d'), 9)
+      val list = List[Bit](0,1,1)
+      assert(decode(tree, list) === List('b', 'd'))
+    }
+  }
+  test("decode where tree is fork and list = 00"){
+    new TestTrees {
+      val tree = Fork(Fork(Leaf('a',2), Leaf('b',3), List('a','b'), 5), Leaf('d',4), List('a','b','d'), 9)
+      val list = List[Bit](0,0)
+      assert(decode(tree, list) === List('a'))
+    }
+  }
+
+  
+  
 
 }
